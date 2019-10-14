@@ -43,7 +43,7 @@
                 <div class="form-group">
                     <label for="user_pic" class="col-sm-2 control-label">用户图标：</label>
                     <div class="col-sm-10">
-                        <img src="images/2.jpg" alt="" class="user_pic" id="avater">
+                        <img src="images/2.jpg" alt="" class="user_pic" id="avatar">
                         <input type="file" id="user_pic" name="user_pic">
                     </div>
                 </div>
@@ -58,7 +58,8 @@
 
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success">修改</button>
+                        <!-- <button type="submit" class="btn btn-success">修改</button> -->
+                        <button type="button" class="btn btn-success" id="submit">修改</button>
                     </div>
                 </div>
             </form>
@@ -67,10 +68,35 @@
 
 
 
+    <!-- 表单验证模态框Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">提示信息</h4>
+                </div>
+                <div class="modal-body">
+                    请完整填写表单再提交呦！
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">确认</button>
+                    <!-- <button type="button" class="btn btn-primary" id="logoutYes">确认退出</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="./js/bootstrap/js/bootstrap.min.js"></script>
+    <script src="./tool/config.js"></script>
+    <script src="./tool/user.js"></script>
+
     <script>
-        $.ajax({
-            url: 'http://localhost:8000/admin/userinfo_get',
-            success: function(res) {
+        //请求用户的详细信息
+        user.getAllInfo({
+            callback: function(res) {
                 if (res.code === 200) {
                     var data = res.data;
                     $.each(data, function(k, value) {
@@ -82,7 +108,43 @@
                     })
                 }
             }
-        })
+        });
+
+
+
+
+        //点击修改按钮，检测表单是否填写完毕
+        $('#submit').on('click', function() {
+            var fd = new FormData($('form')[0]); //传入DOM对象形式的form标签
+            if (fd.get('username').trim() === '' ||
+                fd.get('password').trim() === '' ||
+                fd.get('nickname').trim() === '' ||
+                fd.get('email').trim() === '' ||
+                fd.get('user_pic').size === 0
+            ) {
+                // 判断表单是否填写完整，不完整用模态框进行提示
+                $('#myModal').modal('show');
+                return;
+            }
+
+            user.edit({
+                data: fd,
+                callback: function(res) {
+                    if (res.code === 200) {
+                        parent.location.href = './login.html';
+                    }
+                }
+            });
+        });
+
+
+
+        //本地图片预览
+        $('#user_pic').on('change', function() {
+            var tempFile = this.files[0];
+            var tempSrc = URL.createObjectURL(tempFile);
+            $('#avatar').prop('src', tempSrc);
+        });
     </script>
 
 </body>
