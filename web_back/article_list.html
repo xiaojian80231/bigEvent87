@@ -286,6 +286,12 @@
     <script src="./tool/config.js"></script>
     <script src="./tool/article.js"></script>
 
+    <!-- 引入jQuery分页插件文件 -->
+    <script src="./js/jquery.twbsPagination.js"></script>
+
+
+    <script src="./js/template-web.js"></script>
+
 
     <!-- 设置文章信息模板 -->
     <script type="text/html" id="article">
@@ -318,22 +324,12 @@
 
 
     <script>
-        //页面加载中请求数据生成结构
-        // $.ajax({
-        //     url: 'http://localhost:8000/admin/search',
-        //     data: {
-        //         type: $('#selCategory').val(),
-        //         state: $('#selStatus').val()
-        //     },
-        //     success: function(res) {
-        //         if (res.code === 200) {
-        //             var htmlStr = template('article', res);
-        //             $('tbody').html(htmlStr);
-        //         }
-        //     }
-        // });
-        getArticle();
+        var myTotalPage; //用来保存当前的总页数，无需设置初始值，因为不确定
+        var myPage = 1; //用来保存当前页码
 
+        //页面加载中请求数据生成结构
+
+        getArticle();
 
         //筛选文章数据
         article.getCate({
@@ -350,19 +346,8 @@
         $('#btnSearch').on('click', function(e) {
             e.preventDefault(); //阻止默认的提交
 
-            // $.ajax({
-            //     url: 'http://localhost:8000/admin/search',
-            //     data: {
-            //         type: $('#selCategory').val(),
-            //         state: $('#selStatus').val()
-            //     },
-            //     success: function(res) {
-            //         if (res.code === 200) {
-            //             var htmlStr = template('article', res);
-            //             $('tbody').html(htmlStr);
-            //         }
-            //     }
-            // });
+            $('.first').click();
+
             getArticle();
         });
 
@@ -372,12 +357,42 @@
                 url: 'http://localhost:8000/admin/search',
                 data: {
                     type: $('#selCategory').val(),
-                    state: $('#selStatus').val()
+                    state: $('#selStatus').val(),
+                    page: myPage //默认为第一页的数据，点击页码后会修改为其他页
                 },
                 success: function(res) {
                     if (res.code === 200) {
                         var htmlStr = template('article', res);
                         $('tbody').html(htmlStr);
+
+
+
+                        //分页功能
+                        var totalPages = res.totalPage;
+
+                        if (totalPages === myTotalPage) {
+                            return;
+                        }
+
+                        myTotalPage = totalPages;
+
+                        $('.pagination').twbsPagination('destroy');
+                        $('.pagination').twbsPagination({
+                            totalPages: totalPages,
+                            visiblePages: 5,
+                            first: '首页',
+                            last: '尾页',
+                            prev: '上一页',
+                            next: '下一页',
+                            onPageClick: function(event, page) {
+                                myPage = page;
+                                getArticle();
+                            }
+                        });
+
+
+
+
                     }
                 }
             });

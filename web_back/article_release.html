@@ -72,13 +72,24 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success">发布</button>
+                        <!-- <button type="submit" class="btn btn-success">发布</button> -->
+                        <button type="button" class="btn btn-success" id="btn">发布</button>
                         <button type="submit" class="btn btn-default">存为草稿</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
+
+
+
+
+    <!-- 瞎写的，连带着上面注释了一个按钮，多了一个按钮 -->
+    <script>
+        $('#btn').on('click', function() {
+            console.log(tinyMCE.activeEditor.getContent());
+        })
+    </script>
 
 </body>
 

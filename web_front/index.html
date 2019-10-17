@@ -55,8 +55,9 @@
 
     <div class="main_con clearfix">
         <div class="left_con">
+
             <ul class="focus_list">
-                <li class="first">
+                <!-- <li class="first">
                     <a href="#"><img src="images/pic01.jpg" alt=""></a>
                     <p>图片说明</p>
                 </li>
@@ -75,7 +76,7 @@
                 <li>
                     <a href="#"><img src="images/pic06.jpg" alt=""></a>
                     <p>图片说明</p>
-                </li>
+                </li> -->
             </ul>
 
             <div class="common_title">
@@ -215,11 +216,53 @@
             <span>|</span>
             <a href="#">招聘人才</a>
             <span>|</span>
-            <a href="#">友情链接</a>		
+            <a href="#">友情链接</a>
         </div>
-        <p>CopyRight © 2019 深圳大事件信息技术股份有限公司   All Rights Reserved</p>
-        <p>电话：0755-****888    粤ICP备*******8号</p>
+        <p>CopyRight © 2019 深圳大事件信息技术股份有限公司 All Rights Reserved</p>
+        <p>电话：0755-****888 粤ICP备*******8号</p>
     </div>
+
+
+
+    <!-- 引入jQuery和axios和模板引擎 -->
+    <script src="./js/jquery-1.12.4.min.js"></script>
+    <script src="./js/axios.min.js"></script>
+    <script src="./js/template-web.js"></script>
+
+
+
+    <!-- 设置模板 -->
+    <script type="text/html" id="article">
+        {{each data v i}}
+        <li {{if i===0 }}class="first" {{/if}}>
+            <a href="#"><img src="{{v.cover}}" alt=""></a>
+            <p>{{v.title}}</p>
+            {{/each}}
+    </script>
+
+
+
+    <!-- 通过axios制作首页顶部的文章展示功能 -->
+    <script>
+        //发送请求
+        axios({
+                method: 'get',
+                url: 'http://localhost:8000/admin/search',
+                params: {
+                    perpage: 5 //需要获取5条文章数据
+                }
+            })
+            .then(function(res) {
+                res = res.data;
+
+                var htmlStr = template('article', res);
+
+                $('.focus_list').html(htmlStr);
+            })
+    </script>
+
+
+
 
 </body>
 
